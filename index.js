@@ -9,6 +9,7 @@ const hostname = '127.0.0.1';
 const port = 3000;
 const mongodbURI = "mongodb+srv://calvintorsa:2rALUuWbXkYS0vCj@cluster0.mdtfbmm.mongodb.net/?retryWrites=true&w=majority";
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/user", authenticateJWT, userRouter);

@@ -1,12 +1,25 @@
+const redis = require("redis");
 const UserService = require("../services/UserServices");
 
+const client = redis.createClient();
+
 exports.getAlluser = async (req, res) => {
-    try {
-        const users = await UserService.getAllUsers();
-        res.json({ data: users, status: "success" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    let results;
+    let cache = false;
+    client.get('all', async (err, cacheResults) => {
+        try {
+            if (cacheResults) {
+                cache = true;
+                results = JSON.parse(cacheResults);
+            } else {
+                results = await UserService.getAllUsers();
+                await client.set('all', JSON.stringify(results));
+            }
+            res.json({ data: results, status: "success", cache });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    })
 };
 
 exports.createUser = async (req, res) => {
